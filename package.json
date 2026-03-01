@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aiko-chan-ai/djs-selfbot-v13.git"
+    "url": "git+https://github.com/002-sans/djs-selfbot-v13.git"
   },
   "keywords": [
     "discord.js",
@@ -47,9 +47,9 @@
   "author": "aiko-chan-ai",
   "license": "GNU General Public License v3.0",
   "bugs": {
-    "url": "https://github.com/aiko-chan-ai/djs-selfbot-v13/issues"
+    "url": "https://github.com/002-sans/djs-selfbot-v13/issues"
   },
-  "homepage": "https://github.com/aiko-chan-ai/djs-selfbot-v13#readme",
+  "homepage": "https://github.com/002-sans/djs-selfbot-v13#readme",
   "dependencies": {
     "@discordjs/builders": "^1.6.3",
     "@discordjs/collection": "^2.1.1",
