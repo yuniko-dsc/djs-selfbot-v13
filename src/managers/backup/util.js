@@ -9,7 +9,7 @@ const MaxBitratePerTier = {
   TIER_3: 384_000,
 };
 
-/*
+/**
  * @param {string} url
  * @returns {Promise<Buffer>}
  */
@@ -18,9 +18,9 @@ async function fetchBuffer(url) {
   return Buffer.from(await response.arrayBuffer());
 }
 
-/*
+/**
  * Gets the permissions for a channel
- * @param {GuildChannel} channel
+ * @param {import('../../structures/GuildChannel')} channel
  * @returns {Object[]}
  */
 function fetchChannelPermissions(channel) {
@@ -42,9 +42,9 @@ function fetchChannelPermissions(channel) {
   return permissions;
 }
 
-/*
+/**
  * Fetches voice channel data for backup
- * @param {GuildChannel} channel
+ * @param {import('../../structures/GuildChannel')} channel
  * @returns {Promise<Object>}
  */
 async function fetchVoiceChannelData(channel) {
@@ -58,9 +58,9 @@ async function fetchVoiceChannelData(channel) {
   };
 }
 
-/*
+/**
  * Fetches messages from a channel
- * @param {TextBasedChannel} channel
+ * @param {import('../../structures/interfaces/TextBasedChannel')} channel
  * @param {Object} options
  * @returns {Promise<Object[]>}
  */
@@ -116,9 +116,9 @@ async function fetchChannelMessages(channel, options) {
   return messages;
 }
 
-/*
+/**
  * Fetches text channel data for backup
- * @param {GuildChannel} channel
+ * @param {import('../../structures/GuildChannel')} channel
  * @param {Object} options
  * @returns {Promise<Object>}
  */
@@ -171,11 +171,11 @@ async function fetchTextChannelData(channel, options) {
   return channelData;
 }
 
-/*
+/**
  * Creates a category for the guild
  * @param {Object} categoryData
- * @param {Guild} guild
- * @returns {Promise<GuildChannel>}
+ * @param {import('../../structures/Guild').Guild} guild
+ * @returns {Promise<import('../../structures/GuildChannel')>}
  */
 async function loadCategory(categoryData, guild) {
   const category = await guild.channels.create(categoryData.name, { type: 'GUILD_CATEGORY' });
@@ -196,13 +196,13 @@ async function loadCategory(categoryData, guild) {
   return category;
 }
 
-/*
+/**
  * Create a channel and returns it
  * @param {Object} channelData
- * @param {Guild} guild
- * @param {GuildChannel|null} category
+ * @param {import('../../structures/Guild').Guild} guild
+ * @param {import('../../structures/GuildChannel')|null} category
  * @param {Object} options
- * @returns {Promise<GuildChannel|undefined>}
+ * @returns {Promise<import('../../structures/GuildChannel')|undefined>}
  */
 async function loadChannel(channelData, guild, category, options) {
   const loadMessages = async (channel, messages, previousWebhook) => {
@@ -332,9 +332,9 @@ async function loadChannel(channelData, guild, category, options) {
   return channel;
 }
 
-/*
+/**
  * Delete all roles, channels, emojis, etc. of a guild
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @returns {Promise<void>}
  */
 async function clearGuild(guild) {

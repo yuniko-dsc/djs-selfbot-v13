@@ -310,7 +310,12 @@ class ClientUser extends User {
     this.client.options.device = device;
     ClientProperties.applyToClientOptions(this.client.options);
     if (this.client.presence) {
-      this.client.presence.set({});
+      this.client.presence.set({
+        status: this.client.presence.status,
+        activities: this.client.presence.activities,
+        afk: this.client.presence.afk,
+        since: this.client.presence.since,
+      });
     }
     return this;
   }

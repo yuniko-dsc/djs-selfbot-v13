@@ -21,7 +21,7 @@ const StageChannel = require('../../structures/StageChannel');
  * @property {boolean} [audio=true] Play audio with stream/video links
  */
 
-/*
+/**
  * Normalizes joinVoice data.
  * @param {JoinVoiceData} [data={}] Options
  * @returns {object}
@@ -44,9 +44,9 @@ function normalizeData(data = {}) {
   };
 }
 
-/*
+/**
  * Builds a Discord stream key for a voice channel.
- * @param {Channel} channel Voice channel
+ * @param {import('../../structures/Channel')} channel Voice channel
  * @param {string} userId User id
  * @returns {string}
  */
@@ -57,12 +57,12 @@ function getStreamKey(channel, userId) {
   return `guild:${channel.guild.id}:${channel.id}:${userId}`;
 }
 
-/*
+/**
  * Waits for the client's voice state to match a predicate.
- * @param {Client} client Discord client
- * @param {Function} predicate Predicate
+ * @param {import('../Client')} client Discord client
+ * @param {(voiceState: import('../../structures/VoiceState')) => boolean} predicate Predicate
  * @param {number} [timeout=10_000] Timeout in milliseconds
- * @returns {Promise<VoiceState>}
+ * @returns {Promise<import('../../structures/VoiceState')>}
  */
 function waitForSelfVoiceState(client, predicate, timeout = 10_000) {
   return new Promise((resolve, reject) => {
@@ -94,8 +94,8 @@ function waitForSelfVoiceState(client, predicate, timeout = 10_000) {
  */
 class VoiceSession {
   /**
-   * @param {ClientVoiceManager} voiceManager Voice manager
-   * @param {Channel} channel Voice channel
+   * @param {import('./ClientVoiceManager')} voiceManager Voice manager
+   * @param {import('../../structures/Channel')} channel Voice channel
    * @param {JoinVoiceData} [data={}] Initial options
    */
   constructor(voiceManager, channel, data = {}) {
@@ -118,9 +118,9 @@ class VoiceSession {
     this._audioBitrate = normalized.audioBitrate;
     this._audio = normalized.audio;
 
-    /** @type {?VoiceConnection} */
+    /** @type {import('./VoiceConnection')|null} */
     this.connection = null;
-    /** @type {?StreamConnection} */
+    /** @type {import('./VoiceConnection').StreamConnection|null} */
     this.streamConnection = null;
 
     this._streamVideoDispatcher = null;

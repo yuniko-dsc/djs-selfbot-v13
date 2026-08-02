@@ -28,7 +28,7 @@ class BackupCacheManager {
 
   /**
    * The client that instantiated this manager
-   * @type {Client}
+   * @type {import('../client/Client')}
    */
   get client() {
     return this._manager.client;
@@ -36,8 +36,8 @@ class BackupCacheManager {
 
   /**
    * Resolve a guild from an ID
-   * @param {Snowflake} guildId Guild ID
-   * @returns {Guild}
+   * @param {import('../util/SnowflakeUtil').Snowflake} guildId Guild ID
+   * @returns {import('../structures/Guild').Guild}
    * @private
    */
   _resolveGuild(guildId) {
@@ -50,7 +50,7 @@ class BackupCacheManager {
 
   /**
    * Create a backup from a guild and store it in cache
-   * @param {Snowflake} guildId Guild ID to backup
+   * @param {import('../util/SnowflakeUtil').Snowflake} guildId Guild ID to backup
    * @param {Object} [options] Backup creation options
    * @returns {Promise<Object>} Backup data
    */
@@ -79,7 +79,7 @@ class BackupCacheManager {
 
   /**
    * Load a cached backup into a guild
-   * @param {Snowflake} guildId Target guild ID
+   * @param {import('../util/SnowflakeUtil').Snowflake} guildId Target guild ID
    * @param {string} backupId Backup ID
    * @param {Object} [options] Load options
    * @returns {Promise<Object>} Restored backup data

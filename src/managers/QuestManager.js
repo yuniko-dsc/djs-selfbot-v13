@@ -30,8 +30,7 @@ class Quest {
 
   /**
    * Raw quest data from the API
-   * @type {Object}
-   * @readonly
+   * @returns {Object}
    */
   get raw() {
     return this._raw;
@@ -1054,7 +1053,7 @@ class QuestManager extends BaseManager {
     this.cache.clear();
   }
 
-  /*
+  /**
    * Make QuestManager iterable
    * @returns {IterableIterator<Quest>}
    */

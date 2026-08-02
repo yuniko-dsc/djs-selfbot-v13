@@ -731,6 +731,7 @@ class RichPresence extends Activity {
   setup(data = {}) {
     this.secrets = 'secrets' in data ? data.secrets : {};
     this.metadata = 'metadata' in data ? data.metadata : {};
+    this.applicationId ??= '1352297034669101117';
   }
 
   /**
@@ -959,6 +960,11 @@ class RichPresence extends Activity {
    */
   setPlatform(platform) {
     this.platform = platform;
+    if (typeof platform === 'string' && platform.toLowerCase() === 'crunchyroll') {
+      this.applicationId = '981509069309354054';
+    } else {
+      this.applicationId = '1352297034669101117';
+    }
     return this;
   }
 

@@ -101,13 +101,26 @@ Timestamp: ${timestamp}`;
     }
 
     const performEdit = async () => {
-      const targetMessage = message instanceof Message ? message : this.cache.get(messageId);
+      let targetMessage = message instanceof Message ? message : this.cache.get(messageId);
       const botUserId = this.client.user?.id;
+
+      // 0. Resolve the message from the API when it is not cached, otherwise every
+      //    check below is silently skipped and Discord answers with a bare 50013.
+      if (!targetMessage) {
+        try {
+          const raw = await this.client.api.channels[this.channel.id].messages[messageId].get();
+          targetMessage = this._add(raw, false);
+        } catch {
+          // Unreachable message (deleted / no access): let the request itself fail below.
+        }
+      }
 
       // 1. Ownership check (only original author can edit message content)
       if (targetMessage && targetMessage.author && botUserId && targetMessage.author.id !== botUserId) {
         const err = new Error(
-          `[MESSAGE_EDIT_FAILED] Cannot edit message: Message was authored by user "${targetMessage.author.id}", but client is logged in as "${botUserId}". Only the original author can edit message content.`,
+          `[MESSAGE_EDIT_FAILED] Cannot edit message: Message was authored by user "${targetMessage.author.id}" (${
+            targetMessage.author.tag ?? 'unknown tag'
+          }), but client is logged in as "${botUserId}". Only the original author can edit message content — no permission grants this. Send a new message instead of editing this one.`,
         );
         const debugInfo = this._formatMessageEditDebug(message, err);
         this.client.emit('debug', debugInfo);
@@ -130,11 +143,53 @@ Timestamp: ${timestamp}`;
         throw err;
       }
 
+      // 2b. System message check (joins, pins, boosts... are not editable)
+      if (targetMessage && targetMessage.system) {
+        const err = new Error(
+          `[MESSAGE_EDIT_FAILED] Message "${messageId}" is a system message (type "${targetMessage.type}") and cannot be edited.`,
+        );
+        const debugInfo = this._formatMessageEditDebug(message, err);
+        this.client.emit('debug', debugInfo);
+        if (this.client.options?.debugMessageEdit || process.env.DEBUG_MESSAGE_EDIT) {
+          console.log(debugInfo);
+        }
+        throw err;
+      }
+
+      // 2c. Timeout check (a timed-out member gets 50013 on every send/edit,
+      //     even though permissionsFor() still reports the permission as granted)
+      if (this.channel.guild && botUserId) {
+        const me = this.channel.guild.members.cache.get(botUserId);
+        const until = me?.communicationDisabledUntilTimestamp;
+        if (until && until > Date.now()) {
+          const err = new Error(
+            `[MESSAGE_EDIT_FAILED] Client is timed out in guild "${this.channel.guild.id}" until ${new Date(
+              until,
+            ).toISOString()} and cannot edit messages there.`,
+          );
+          const debugInfo = this._formatMessageEditDebug(message, err);
+          this.client.emit('debug', debugInfo);
+          if (this.client.options?.debugMessageEdit || process.env.DEBUG_MESSAGE_EDIT) {
+            console.log(debugInfo);
+          }
+          throw err;
+        }
+      }
+
       // 3. Channel permission checks
       if (this.channel.guild) {
-        const permissions = this.channel.permissionsFor(this.client.user);
+        let permissions = this.channel.permissionsFor(this.client.user);
+        // permissionsFor() returns null when the member is not cached, which silently
+        // disabled every check below. Fetch the member once so the checks are real.
+        if (!permissions && botUserId) {
+          try {
+            permissions = this.channel.permissionsFor(await this.channel.guild.members.fetch(botUserId));
+          } catch {
+            // Not a member anymore / fetch failed: leave the API to answer.
+          }
+        }
         if (permissions) {
-          if (!permissions.has(Permissions.FLAGS.VIEW_CHANNEL, false)) {
+          if (!permissions.has(Permissions.FLAGS.VIEW_CHANNEL)) {
             const err = new Error(
               `[MESSAGE_EDIT_FAILED] Missing VIEW_CHANNEL permission in channel "${this.channel.id}".`,
             );
@@ -150,7 +205,7 @@ Timestamp: ${timestamp}`;
             ? Permissions.FLAGS.SEND_MESSAGES_IN_THREADS
             : Permissions.FLAGS.SEND_MESSAGES;
 
-          if (!permissions.has(sendPerm, false)) {
+          if (!permissions.has(sendPerm)) {
             const err = new Error(
               `[MESSAGE_EDIT_FAILED] Missing ${
                 this.channel.isThread?.() ? 'SEND_MESSAGES_IN_THREADS' : 'SEND_MESSAGES'
@@ -164,7 +219,7 @@ Timestamp: ${timestamp}`;
             throw err;
           }
 
-          if (!permissions.has(Permissions.FLAGS.READ_MESSAGE_HISTORY, false)) {
+          if (!permissions.has(Permissions.FLAGS.READ_MESSAGE_HISTORY)) {
             const err = new Error(
               `[MESSAGE_EDIT_FAILED] Missing READ_MESSAGE_HISTORY permission in channel "${this.channel.id}".`,
             );
@@ -236,7 +291,14 @@ Timestamp: ${timestamp}`;
       });
       const attachmentsData = await Promise.all(requestPromises);
       attachmentsData.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-      data.attachments = attachmentsData;
+      // Only touch `attachments` when something was actually uploaded or explicitly
+      // provided: sending `attachments: []` on an edit tells Discord to strip every
+      // existing attachment of the message.
+      if (attachmentsData.length) {
+        data.attachments = attachmentsData;
+      } else if (!Array.isArray(options?.attachments) && !Array.isArray(options?.options?.attachments)) {
+        delete data.attachments;
+      }
 
       try {
         const d = await this.client.api.channels[this.channel.id].messages[messageId].patch({ data });

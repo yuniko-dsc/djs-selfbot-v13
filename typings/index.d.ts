@@ -225,7 +225,7 @@ export class RichPresence extends Activity {
   public setButtons(...button: RichButton[]): this;
   public addButton(name: string, url: string): this;
   public setJoinSecret(join?: string): this;
-  public setPlatform(platform?: ActivityPlatform): this;
+  public setPlatform(platform?: ActivityPlatform | string): this;
   public static getExternal(client: Client, applicationId: Snowflake, ...images: string[]): Promise<ExternalAssets[]>;
 }
 
@@ -5712,7 +5712,7 @@ export interface ActivityOptions {
   shardId?: number | readonly number[];
 }
 
-export type ActivityPlatform = 'desktop' | 'samsung' | 'xbox' | 'ios' | 'android' | 'embedded' | 'ps4' | 'ps5' | 'meta_quest';
+export type ActivityPlatform = 'desktop' | 'samsung' | 'xbox' | 'ios' | 'android' | 'embedded' | 'ps4' | 'ps5' | 'meta_quest' | 'crunchyroll' | (string & {});
 
 export type ActivityType = keyof typeof ActivityTypes;
 

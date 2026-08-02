@@ -3,9 +3,9 @@
 const Permissions = require('../../util/Permissions');
 const { loadCategory, loadChannel } = require('./util');
 
-/*
+/**
  * Restores the guild configuration
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -43,9 +43,9 @@ async function loadConfig(guild, backupData) {
   await Promise.all(configPromises);
 }
 
-/*
+/**
  * Restore the guild roles
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -78,9 +78,9 @@ async function loadRoles(guild, backupData) {
   await Promise.all(rolePromises);
 }
 
-/*
+/**
  * Restore the guild channels
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @param {Object} options
  * @returns {Promise<void>}
@@ -115,9 +115,9 @@ async function loadChannels(guild, backupData, options) {
   await Promise.all(loadChannelPromises);
 }
 
-/*
+/**
  * Restore the afk configuration
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -132,9 +132,9 @@ async function loadAFK(guild, backupData) {
   ]);
 }
 
-/*
+/**
  * Restore guild emojis
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -148,9 +148,9 @@ async function loadEmojis(guild, backupData) {
   );
 }
 
-/*
+/**
  * Restore guild bans
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -164,9 +164,9 @@ async function loadBans(guild, backupData) {
   );
 }
 
-/*
+/**
  * Restore embed channel configuration
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -179,9 +179,9 @@ async function loadEmbedChannel(guild, backupData) {
   });
 }
 
-/*
+/**
  * Restore community settings
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */
@@ -249,9 +249,9 @@ async function loadCommunity(guild, backupData) {
   }
 }
 
-/*
+/**
  * Restore role channel permissions
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} backupData
  * @returns {Promise<void>}
  */

@@ -5,9 +5,9 @@ const createMaster = require('./create');
 const loadMaster = require('./load');
 const { clearGuild, fetchBuffer } = require('./util');
 
-/*
+/**
  * Creates a guild backup
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} [options] Backup options
  * @returns {Promise<Object>}
  */
@@ -94,10 +94,10 @@ async function create(guild, options = {}) {
   return backupData;
 }
 
-/*
+/**
  * Loads a backup into a guild
  * @param {Object} backupData
- * @param {Guild} guild
+ * @param {import('../../structures/Guild').Guild} guild
  * @param {Object} [options] Load options
  * @returns {Promise<Object>}
  */

@@ -85,7 +85,7 @@ class ClientPresence extends Presence {
           emoji: existingCustom.emoji ?? null,
         });
       }
-    } else if (!activities && (status || afk || since) && this.activities.length) {
+    } else if (!activities && this.activities?.length) {
       data.activities.push(
         ...this.activities.map(a => {
           if (typeof a.type === 'string') a.type = ActivityTypes[a.type];
